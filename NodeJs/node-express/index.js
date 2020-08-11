@@ -4,31 +4,19 @@ const morgan = require('morgan');
 const bodyParser= require('body-parser');
 
 const dishRouter = require('./routes/dishRouter');
+const promoRouter = require('./routes/promoRouter');
+const leaderRouter = require('./routes/leadersRouter');
+
 const hostname='localhost';
 const port = 3000;
 
 const app= express();
 app.use(morgan('dev'));
 app.use(bodyParser.json());
+
 app.use('/dishes',dishRouter);
-
-app.get('/dishes/:dishId',(req,res,next)=>{
-    res.end('Will send detail of the dish:' + req.param.dishId + 'to you');
-});
-
-app.post('/dishes/:dishId',(req,res,next)=>{
-    res.statusCode= 403;
-    res.end('Post not supported' + req.param.dishId);
-});
-
-app.put('/dishes/:dishId',(req,res,next)=>{
-    res.write(' Updating :' + req.param.dishId + '\n');
-    res.end('Will update' + req.body.name + 'with details' + req.body.description);
-});
-
-app.delete('/dishes/:dishId',(req,res,next)=>{
-    res.end('Deleting dishe' + req.param.dishId);
-});
+app.use('/promotions',promoRouter);
+app.use('/leaders',leaderRouter);
 
 app.use(express.static(__dirname+'/public'));
 
