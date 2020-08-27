@@ -7,11 +7,11 @@ var jwt= require('jsonwebtoken');
 
 var config=require('./config');
 
-passport.use(new LocalStrategy(User.authenticate()));
+passport.use(new LocalStrategy(User.authenticate())); //local strategy
 passport.serializeUser(User.serializeUser());
 passport.deserializeUser(User.deserializeUser());
 
-exports.getToken=function(user){
+exports.getToken=function(user){                        //token authentication
     return jwt.sign(user, config.secretKey, 
         {expiresIn:100000});
 };
@@ -22,7 +22,7 @@ opts.secretOrKey= config.secretKey;
 
 exports.jwtPassport= passport.use(new JwtStrategy(opts,
     (jwt_payload,done)=>{
-        console.log('kwt payload:', jwt_payload);
+       
         User.findOne({_id: jwt_payload._id},(err,user)=>{
             if (err){
                 return done(err,false);
@@ -37,4 +37,24 @@ exports.jwtPassport= passport.use(new JwtStrategy(opts,
 
     }));
 
-    exports.verifyUser= passport.authenticate('jwt',{session:false});
+    
+
+exports.verifyUser= passport.authenticate('jwt',{session:false});
+
+exports.verifyAdmin = (req, res, next) =>{
+    if(req.user.admin == true){
+        res.statusCode = 200;
+        next();
+    }
+    else{
+        res.statusCode = 403;
+        var err = new Error('You are not authorized to perform this operation!');
+        next(err);
+    }
+};
+
+
+
+
+
+  
